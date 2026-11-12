@@ -4,5 +4,6 @@ out
 .remotion-tmp
 __pycache__
 .hoplite
-shorts/*/voice/line*
+shorts/*/voice/line[0-9]*
 shorts/*/audio/*.wav
+shorts/*/voice/cache
