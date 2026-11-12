@@ -313,7 +313,7 @@ export class World {
         for (let i = 0; i < FLOCK.length; i++) {
           const [x, z] = FLOCK[i], run = t - T.scatter - i * 0.012;
           if (run > 0) {
-            const dx = x - F[0] + (i % 3 - 1) * 0.6, dz = z - F[1] + (i % 2 ? 0.8 : -0.8), l = Math.hypot(dx, dz) || 1, d = (13 * run * run) / (run + 0.2);
+            const dx = x - F[0] + (i % 3 - 1) * 0.6 + (i === 9 ? 2.2 : 0), dz = z - F[1] + (i % 2 ? 0.8 : -0.8), l = Math.hypot(dx, dz) || 1, d = (13 * run * run) / (run + 0.2); // bird 9 would run through the lens
             const px = x + (dx / l) * d, pz = z + (dz / l) * d;
             E[i].set(px, pz, runPose(i, "wide"), { flip: flipFor(dx, dz), bob: runBob(i) });
             if (run < 1.0) dust(px - (dx / l) * 1.1, 0.24, pz - (dz / l) * 1.1, 0.4 + 0.1 * (i % 3), i);
