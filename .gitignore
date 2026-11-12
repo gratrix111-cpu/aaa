@@ -3,3 +3,6 @@ out
 *.log
 .remotion-tmp
 __pycache__
+.hoplite
+shorts/*/voice/line*
+shorts/*/audio/*.wav
