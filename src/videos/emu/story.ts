@@ -145,5 +145,6 @@ export const dofAt = (_id: number, _t: number) => 0;
 /** on-screen sticker (DOM layer): the speed of a running emu */
 export const STICKER = { t0: 36.35, t1: 37.75, text: "50 км/ч" };
 
-/** cover still: the bird in the major's hat staring into the lens, the board behind it */
-export const COVER: { t: number; cam: Cam } = { t: 58.4, cam: { pos: [10.9, 1.62, 17.3], look: [10.7, 1.7, 13.5], fov: 34, roll: 0 } };
+/** cover still: the bird in the major's hat staring into the lens, the board behind it thrown out of focus (dof = blur at
+ *  infinity, px) so the title stays readable */
+export const COVER: { t: number; cam: Cam; dof: number } = { t: 58.4, cam: { pos: [10.9, 1.62, 17.3], look: [10.7, 1.7, 13.5], fov: 34, roll: 0 }, dof: 40 };

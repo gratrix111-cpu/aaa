@@ -31,7 +31,7 @@ const makeBloom = () => {
 };
 const fwd = new THREE.Vector3(), fpt = new THREE.Vector3();
 
-const Inner: React.FC<{ p: Required<EmuProps>; t: number; cam?: Cam }> = ({ p, t, cam: camO }) => {
+const Inner: React.FC<{ p: Required<EmuProps>; t: number; cam?: Cam; dof?: number }> = ({ p, t, cam: camO, dof }) => {
   const { camera, scene } = useThree();
   const world = useMemo(() => new World(), []);
   const fx = useMemo(() => ({
@@ -59,7 +59,7 @@ const Inner: React.FC<{ p: Required<EmuProps>; t: number; cam?: Cam }> = ({ p, t
   noInkFallback(world.root);
   cam.getWorldDirection(fwd);
   fx.lens.focus = Math.max(0.3, fpt.sub(cam.position).dot(fwd));
-  fx.lens.cInf = dofAt(s.id, t);
+  fx.lens.cInf = dof ?? dofAt(s.id, t);
   gradeFor(fx.grade, s.light);
   return (
     <>
@@ -69,11 +69,11 @@ const Inner: React.FC<{ p: Required<EmuProps>; t: number; cam?: Cam }> = ({ p, t
   );
 };
 
-const Stage: React.FC<{ p: Required<EmuProps>; t: number; cam?: Cam }> = ({ p, t, cam }) => (
+const Stage: React.FC<{ p: Required<EmuProps>; t: number; cam?: Cam; dof?: number }> = ({ p, t, cam, dof }) => (
   <AbsoluteFill>
     <ThreeCanvas width={1080} height={1920} dpr={p.dpr} shadows gl={{ antialias: false, stencil: false, powerPreference: "high-performance", toneMappingExposure: 1.0 }}
       camera={{ fov: 40, near: 0.2, far: 1500 }}>
-      <Inner p={p} t={t} cam={cam} />
+      <Inner p={p} t={t} cam={cam} dof={dof} />
     </ThreeCanvas>
   </AbsoluteFill>
 );
@@ -122,10 +122,10 @@ export const EmuKeys: React.FC = () => {
 
 /** cover image (render one still): the scene at COVER.t from the cover camera with the title on top */
 export const EmuCover: React.FC = () => {
-  const p = useMemo(props, []);
+  const p = useMemo(() => ({ ...props(), lens: true }), []);
   return (
     <AbsoluteFill style={{ background: "#cfe3f2" }}>
-      <Stage p={p} t={COVER.t} cam={COVER.cam} />
+      <Stage p={p} t={COVER.t} cam={COVER.cam} dof={COVER.dof} />
       <CoverTitle />
     </AbsoluteFill>
   );
