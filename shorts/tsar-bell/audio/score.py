@@ -176,7 +176,7 @@ S(shatter(), T["burst"], -3)
 S(splash(0.6), T["burst"] + 0.08, -12)
 S(fades(bp(colored(ns(2.6), R, 1.2), 200, 900) * (0.5 + 0.5 * smooth_noise(ns(2.6), R, 1.5)), 0.6, 0.8), 43.0, -20)
 for t0 in (43.5, 43.82, 44.9, T["crow"], T["crow"] + 0.33, T["crow"] + 0.66):
-    S(caw(), t0, -13, 0.1)
+    S(caw(), t0, -7, 0.1)
 S(creak(1.5, 16, 70, (700, 1900)), 46.4, -12, -0.3)
 S(I.pluck(55, 1.0, R, 0.8, 0.9), T["snap"], -4, -0.2)
 S(hp(R.standard_normal(ns(0.1)), 2200) * env_exp(ns(0.1), 0.012, 0.0003), T["snap"], -6, -0.2)
@@ -265,17 +265,20 @@ for i, m in enumerate((58, 57, 56, 55)):  # the descending "wah wah"
 for q in range(12):
     tq = 33.8 + q * B
     if tq < 39.4:
-        M(I.pluck(I.m2f(50 if q % 2 == 0 else 57), 0.6, R, 0.4, 0.4), tq, -9, -0.2)
-        M(I.glock(I.m2f((74, 77, 81, 77, 76, 79, 82, 79, 81, 84, 86, 88)[q]), 0.5, R, 0.9), tq + B * 0.5, -13, 0.3)
+        M(I.pluck(I.m2f(50 if q % 2 == 0 else 57), 0.6, R, 0.4, 0.4), tq, -4, -0.2)
+        M(I.glock(I.m2f((74, 77, 81, 77, 76, 79, 82, 79, 81, 84, 86, 88)[q]), 0.5, R, 0.9), tq + B * 0.5, -8, 0.3)
 roll(38.6, 39.85, 0.15, 0.8, -14)
 # same thing / a hundred years
 M(I.pad([I.m2f(50), I.m2f(57), I.m2f(62), I.m2f(65)], 3.6, 0.5, R, att=0.4, rel=0.8), 40.9, -10)
 tune(41.0, [(69, 2), (65, 1.5), (62, 2)], "glock", -12)
-# Napoleon: a little march on fife and drum
-for q in range(8):
-    tq = 45.85 + q * B * 0.5
+# Napoleon: a little march on fife and drum (drum roll + two tuba steps fill the pause before his name)
+roll(44.9, 45.8, 0.5, 1.0, -10)
+for i, m in enumerate((38, 45)):
+    M(I.brass(I.m2f(m), 0.3, 0.9, R, "tuba"), 45.0 + i * 0.42, -6, -0.1)
+for q in range(11):
+    tq = 44.95 + q * B * 0.5
     if tq < T["snap"] - 0.1:
-        M(I.snare(0.5 + 0.3 * (q % 4 == 0), R, 0.2), tq, -14, 0.2)
+        M(I.snare(0.5 + 0.3 * (q % 4 == 0), R, 0.2), tq, -9, 0.2)
 tune(45.85, [(74, 0.5), (74, 0.25), (74, 0.25), (79, 0.5), (79, 0.5), (83, 0.5), (79, 0.5), (86, 1)], "fife", -13, -0.2)
 M(I.brass(I.m2f(41), 1.1, 0.8, R, "tuba", fall=-4.0), 48.45, -6)
 # raising: brass climbs, lands with the bell
