@@ -110,3 +110,6 @@ export const dofAt = (id: number, t: number) => {
   if (id === 18) return lerp(0, 9, ss(t, 54.6, 55.1));
   return DOF[id] ?? 0;
 };
+
+/** cover still: the guards dousing the red-hot bell, framed low so the title has the upper third */
+export const COVER: { t: number; cam: Cam } = { t: 24.3, cam: { pos: [0, 1.6, 19], look: [0, 4.85, 0], fov: 46, roll: 0 } };

@@ -33,6 +33,17 @@ ffmpeg -framerate 30 -i out/bell/frames/element-%04d.jpeg -i shorts/tsar-bell/au
 python3 scripts/short_qa.py out/bell/final.mp4 out/bell/qa shorts/tsar-bell/shots.json
 ```
 
+### Voice-free version and cover
+
+`score.py` also writes `bed_novoice.wav`: the same music and SFX at the gains they have in the full mix, without the
+narration (the music still dips where each line is spoken). Mux it instead of `mix.wav` to get a video for an external
+voice-over; `shorts/tsar-bell/VOICEOVER.txt` is the narration text and `voice/lines.json` has the start and end of every
+line that the animation and captions are timed to.
+
+```bash
+node scripts/stills.mjs BellCover out/bell/cover_ 0 1     # cover -> out/bell/cover_0.jpg (committed as shorts/tsar-bell/cover.jpg)
+```
+
 ### Notes
 
 - `@react-three/postprocessing` is pinned to 3.0.4: 3.2.x builds its composer asynchronously, so Remotion captures a

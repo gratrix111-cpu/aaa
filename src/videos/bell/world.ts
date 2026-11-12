@@ -8,7 +8,7 @@ import { LIGHTS, LOOK, LightPreset, WorldLook } from "./lights";
 import { NOINK } from "./ink";
 import { ctex, rep, brick, cobbleHD, stoneHD, planksHD, beamHD, roofHD, cloudHD } from "./paint";
 import { Actor, Look, Pose, fxCard, flameTex, puffTex, splashTex, burstTex, elephantTex, crowTex, noteTex, zzzTex, INK } from "./chars";
-import { FPS, SHOTS, T, Light, V3, camAt, shotAt, ss, eo, lerp, clamp01 } from "./story";
+import { FPS, SHOTS, T, Light, V3, Cam, camAt, shotAt, ss, eo, lerp, clamp01 } from "./story";
 
 const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
 const lam = (o: THREE.MeshLambertMaterialParameters) => twoTone(new THREE.MeshLambertMaterial(o));
@@ -273,9 +273,9 @@ export class World {
     mat.color.setScalar(o.glow ?? 1); m.visible = true; m.position.set(x, y, z); m.scale.set(w, h, 1); m.userData.rot = o.rot ?? 0;
   }
 
-  update(tSec: number, cam: THREE.PerspectiveCamera, scene: THREE.Scene, pxScale: number) {
+  update(tSec: number, cam: THREE.PerspectiveCamera, scene: THREE.Scene, pxScale: number, camO?: Cam) {
     const t = tSec, s = shotAt(t), id = s.id, L = PRESET[s.light], K = WLOOK[s.light];
-    const c = camAt(id, t);
+    const c = camO ?? camAt(id, t);
     cam.position.set(...c.pos); cam.up.set(0, 1, 0); cam.lookAt(...c.look); cam.rotateZ(c.roll);
     cam.fov = c.fov; cam.near = 0.2; cam.far = 1500; cam.updateProjectionMatrix(); cam.updateMatrixWorld(); cam.layers.enable(NOINK);
     const focus = V(...c.look), dist = cam.position.distanceTo(focus);
@@ -372,7 +372,7 @@ export class World {
         const sg = id === 7 ? 0 : id === 8 ? eo(t, T.scaffoldFire, T.scaffoldFire + 1.0) : id === 9 ? 1 - 0.85 * ss(t, T.throw + 0.25, 25.2) : 0;
         const C = 5.6;
         ([[C, 9, C], [-C, 9, C], [C, 9, -C], [-C, 9, -C], [0, 9, C], [C, 5.2, 0], [-C, 5.2, 0], [0, 12, 0], [C, 3, C], [-C, 3.5, C], [2.8, 10.6, 2.8], [-2.8, 10.6, 2.8], [0, 5.2, C]] as V3[])
-          .forEach(([x, y, z], i) => flame(x, y - 0.4, z, 1.9 + (i % 3) * 0.5, i + 20, sg * clamp01((t - T.scaffoldFire) * 3 - i * 0.12 + (id > 8 ? 9 : 0))));
+          .forEach(([x, y, z], i) => flame(x, y - (camO ? 0 : 0.4), z, 1.9 + (i % 3) * 0.5, i + 20, sg * clamp01((t - T.scaffoldFire) * 3 - i * 0.12 + (id > 8 ? 9 : 0))));
         if (id === 8) for (let i = 0; i < 4; i++) smoke(Math.sin(i * 2) * 3, 11, Math.cos(i * 2) * 3, i + 30);
         if (id === 9) {
           const run = t < 23.95;

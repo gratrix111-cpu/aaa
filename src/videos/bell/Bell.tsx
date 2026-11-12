@@ -14,8 +14,9 @@ import { InkPass, noInkFallback } from "./ink";
 import { LensBlur } from "./lensblur";
 import { GradeEffect, GRADES, GRADE_STRENGTH, gradeFor } from "./grade";
 import { CARD_K } from "./cardshade";
-import { FPS, TOTAL, T, shotAt, dofAt } from "./story";
+import { FPS, TOTAL, T, COVER, Cam, shotAt, dofAt } from "./story";
 import { Captions } from "./Captions";
+import { CoverTitle } from "./Cover";
 
 export const BELL_FRAMES = TOTAL;
 type Props = { dpr?: number; captions?: boolean; lens?: boolean; ink?: boolean; bloom?: boolean; ms?: number };
@@ -29,8 +30,8 @@ const makeBloom = () => {
 };
 const fwd = new THREE.Vector3(), fpt = new THREE.Vector3();
 
-const Inner: React.FC<{ p: Required<Props> }> = ({ p }) => {
-  const f = useCurrentFrame(), t = f / FPS;
+const Inner: React.FC<{ p: Required<Props>; still?: { t: number; cam: Cam } }> = ({ p, still }) => {
+  const f = useCurrentFrame(), t = still ? still.t : f / FPS;
   const { camera, scene } = useThree();
   const world = useMemo(() => new World(), []);
   const fx = useMemo(() => ({
@@ -54,7 +55,7 @@ const Inner: React.FC<{ p: Required<Props> }> = ({ p }) => {
   const cam = camera as THREE.PerspectiveCamera;
   CARD_K.uPx.value = p.dpr;
   const s = shotAt(t);
-  fpt.copy(world.update(t, cam, scene, p.dpr));
+  fpt.copy(world.update(t, cam, scene, p.dpr, still?.cam));
   noInkFallback(world.root);
   cam.getWorldDirection(fwd);
   fx.lens.focus = Math.max(0.3, fpt.sub(cam.position).dot(fwd));
@@ -83,6 +84,22 @@ export const BellShort: React.FC = () => {
       </AbsoluteFill>
       {flash > 0 && <AbsoluteFill style={{ background: "#ffffff", opacity: flash }} />}
       {p.captions ? <Captions /> : null}
+    </AbsoluteFill>
+  );
+};
+
+/** cover image (render one still): full-resolution scene at COVER.t with the title on top */
+export const BellCover: React.FC = () => {
+  const p = useMemo(() => ({ ...props(), dpr: 1 }), []);
+  return (
+    <AbsoluteFill style={{ background: "#1c1638" }}>
+      <AbsoluteFill>
+        <ThreeCanvas width={1080} height={1920} dpr={1} shadows gl={{ antialias: false, stencil: false, powerPreference: "high-performance", toneMappingExposure: 1.0 }}
+          camera={{ fov: 40, near: 0.2, far: 1500 }}>
+          <Inner p={p} still={COVER} />
+        </ThreeCanvas>
+      </AbsoluteFill>
+      <CoverTitle />
     </AbsoluteFill>
   );
 };

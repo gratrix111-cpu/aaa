@@ -306,15 +306,24 @@ duck = lp(duck, 4)
 music *= dbg(-24.0 - integrated(music)) * dbg(3.0)
 sfx *= dbg(-6.0) * 0.5
 mix = st(v) + music * duck + sfx
-mix *= dbg(-14.0 - integrated(mix))
+bed = music * duck + sfx  # the same mix without the narration, carried through identical gains (for an external voice-over)
+vgain = dbg(-14.0 - integrated(mix))
+mix *= vgain
+bed *= vgain
 # look-ahead peak limiter (5 ms window, ceiling about -1.5 dBFS), then re-trim to -14 LUFS
 from scipy import ndimage
 for _ in range(2):
     pk = ndimage.maximum_filter1d(np.abs(mix).max(axis=0), ns(0.005))
     g = ndimage.uniform_filter1d(np.minimum(1.0, 0.8 / np.maximum(pk, 1e-9)), ns(0.004))
-    mix = mix * g
-    mix *= min(1.0, dbg(-14.0 - integrated(mix)))
+    trim = min(1.0, dbg(-14.0 - integrated(mix * g)))
+    mix = mix * g * trim
+    bed = bed * g * trim
+    vgain *= trim
 mix = fades(mix, 0.005, 0.25)
+bed = fades(bed, 0.005, 0.25)
+write_wav(os.path.join(HERE, "bed_novoice.wav"), bed)
+print("bed without voice: %.1f LUFS, true peak %.1f dBTP; narration sits at %.1f LUFS in the full mix" % (
+    integrated(bed), true_peak(bed), integrated(st(v) * vgain)))
 write_wav(os.path.join(HERE, "music.wav"), music * duck)
 write_wav(os.path.join(HERE, "sfx.wav"), sfx)
 write_wav(os.path.join(HERE, "mix.wav"), mix)
