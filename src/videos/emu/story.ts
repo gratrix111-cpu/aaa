@@ -122,6 +122,8 @@ export function camAt(id: number, t: number): Cam {
   for (let i = 1; i < keys.length; i++) {
     const k = keys[i];
     if (t < k.t) break;
+    // a glide starts where the creep of the hold before it has taken the camera, not back at the key
+    c.pos = mix3(c.pos, c.look, 1 - Math.exp(-0.06 * Math.max(0, k.t - last)));
     const u = k.dur === 0 ? 1 : ss(t, k.t, k.t + (k.dur ?? 0.8));
     c = { pos: mix3(c.pos, k.pos, u), look: mix3(c.look, k.look, u), fov: lerp(c.fov, k.fov ?? c.fov, u), roll: lerp(c.roll, k.roll ?? 0, u) };
     last = k.t + (k.dur ?? 0.8);
